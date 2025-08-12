@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Groq } from "groq-sdk";
+import pdfParse from "pdf-parse/lib/pdf-parse";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -26,13 +27,35 @@ export async function POST(request: NextRequest) {
       // Handle plain text files
       cvText = fileBuffer.toString("utf-8");
     } else if (cvFile.type === "application/pdf") {
-      return NextResponse.json(
-        {
-          error:
-            "PDF support is currently limited. Please upload a Word document (.docx) or text file (.txt) for now.",
-        },
-        { status: 400 }
-      );
+      // Handle PDF files - ACTUALLY extract text content
+      try {
+        const pdfData = await pdfParse(fileBuffer);
+        cvText = pdfData.text;
+
+        // Validate that we actually got text content
+        if (!cvText || !cvText.trim()) {
+          return NextResponse.json(
+            {
+              error:
+                "The PDF appears to be empty or contains no extractable text. Please ensure the PDF contains readable text content.",
+            },
+            { status: 400 }
+          );
+        }
+
+        console.log(
+          `Successfully extracted ${cvText.length} characters from PDF`
+        );
+      } catch (pdfError) {
+        console.error("PDF parsing error:", pdfError);
+        return NextResponse.json(
+          {
+            error:
+              "Failed to parse PDF file. Please ensure the PDF contains extractable text and is not corrupted or password-protected.",
+          },
+          { status: 400 }
+        );
+      }
     } else if (
       cvFile.type ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -45,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Unsupported file type. Please upload a Word document (.docx) or text file (.txt).",
+            "Unsupported file type. Please upload a PDF (.pdf), Word document (.docx), or text file (.txt).",
         },
         { status: 400 }
       );

@@ -4,10 +4,11 @@ A Next.js 14 application that uses AI to analyze candidate CVs against job descr
 
 ## Features
 
-- **File Upload**: Accepts Word (.docx) and text (.txt) files
+- **File Upload**: Accepts PDF (.pdf), Word (.docx), and text (.txt) files
 - **AI Analysis**: Uses Groq's LLM API to analyze candidate fit
 - **Clean UI**: Built with shadcn/ui components and Tailwind CSS
 - **Real-time Results**: Instant analysis with visual feedback
+- **Full PDF Support**: Extract text content directly from PDF files
 
 ## Tech Stack
 
@@ -75,9 +76,16 @@ A Next.js 14 application that uses AI to analyze candidate CVs against job descr
 
 ## File Support
 
+- **PDF**: Uses `pdf-parse` library for .pdf files - extracts text content directly
 - **Word Documents**: Uses `mammoth` library for .docx files
 - **Text Files**: Direct UTF-8 text reading for .txt files
-- **PDF**: Currently limited support (conversion to Word or text recommended)
+
+### PDF Processing Features
+
+- **Direct Text Extraction**: Automatically extracts readable text from PDF files
+- **Multi-page Support**: Processes all pages in multi-page PDFs
+- **Content Validation**: Ensures extracted text is meaningful and not empty
+- **Error Handling**: Graceful fallback for corrupted or unreadable PDFs
 
 ## Error Handling
 

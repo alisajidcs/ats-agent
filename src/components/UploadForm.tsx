@@ -37,11 +37,11 @@ export function UploadForm({ onSubmit, isLoading }: UploadFormProps) {
       newErrors.cvFile = "CV file is required";
     } else if (
       !cvFile.type.match(
-        /^(text\/plain|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document)$/
+        /^(application\/pdf|text\/plain|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document)$/
       )
     ) {
       newErrors.cvFile =
-        "Please upload a Word document (.docx) or text file (.txt)";
+        "Please upload a PDF (.pdf), Word document (.docx), or text file (.txt)";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -96,12 +96,13 @@ export function UploadForm({ onSubmit, isLoading }: UploadFormProps) {
             <Input
               id="cvFile"
               type="file"
-              accept=".docx,.txt"
+              accept=".pdf,.docx,.txt"
               onChange={handleFileChange}
               className={`${errors.cvFile ? "border-red-500" : ""}`}
             />
             <p className="text-sm text-gray-500">
-              Accepted formats: Word documents (.docx) and text files (.txt)
+              Accepted formats: PDF (.pdf), Word documents (.docx), and text
+              files (.txt)
             </p>
             {errors.cvFile && (
               <p className="text-sm text-red-500">{errors.cvFile}</p>
